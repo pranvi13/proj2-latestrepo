@@ -2,23 +2,23 @@
 - name: install jenkins on linux
   hosts: jenkins-master
   become: true
-  tasks:
+  tasks: 
     - name: install java 17
-      yum:
+      yum: 
         name: java-17-amazon-corretto
         state: present
     - name: jenkins repository
-      get_url: 
+      get_url:
         url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
         dest: /etc/yum.repos.d/jenkins.repo
     - name: import key
-      command: rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key 
+      command: rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
     - name: install jenkins
-      yum:
+      yum: 
         name: jenkins
         state: present
     - name: jenkins start
-      systemmd: 
+      systemd:  
         name: jenkins
         enabled: yes
         state: started
@@ -26,4 +26,18 @@
       service:
         name: jenkins
         enabled: yes
-        
+    - name: install git
+      yum:
+        name: git
+        state: present
+      tags: install_git
+    - name: check git version
+      shell: git --version
+      tags: install_git
+      register: git_version
+    - name: print git version
+      debug: 
+        msg: "{{ git_version.stdout }}"
+      tags: install_git
+           
+   
